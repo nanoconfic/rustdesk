@@ -150,6 +150,10 @@ def sign(file_path):
 
 
 def sign_one_file(file_path):
+    if os.getenv("DISABLE_SIGN") == "1":
+        logging.info(f"Skip signing (DISABLE_SIGN): {file_path}")
+        return True
+    
     logging.info(f"Signing {file_path}")
     res = create("sign", file_path)
     logging.info(f"Uploaded {file_path}")
@@ -199,8 +203,11 @@ SIGN_EXTENSIONS = [
 
 
 def sign_files(dir_path, only_ext=None):
-    if only_ext:
-        only_ext = only_ext.split(",")
+    if os.getenv("DISABLE_SIGN") == "1":
+        logging.info(f"Skip all signing in {dir_path} (DISABLE_SIGN)")
+        return
+    # if only_ext:
+    #     only_ext = only_ext.split(",")
         for i in range(len(only_ext)):
             if not only_ext[i].startswith("."):
                 only_ext[i] = "." + only_ext[i]
